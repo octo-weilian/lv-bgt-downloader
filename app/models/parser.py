@@ -101,12 +101,12 @@ def make_topo_feature(element,gml_geom,geom_type):
     feature_obj.append(GML.featureAttribute("OBJECT",element.attrib[STUFGEO_ENT_TYPE]))
     return feature_obj
 
-def parse_gml(input_xml,output_gml,events=("end",),tag=IMGEO_OBJ):
-
+def parse_gml(input_xml,output_gml,tag=IMGEO_OBJ):
+    
         feature_collection = GML.featureCollection()
-        for _,el in etree.iterparse(input_xml,huge_tree=True,events=events,tag=tag):
+        for _,el in etree.iterparse(input_xml,huge_tree=True,tag=tag):
             feature_member = GML.featureMember()
-            
+           
             if (geom:=el.xpath(xp_geometrie2d)):
                 gml_geom = geom[0].xpath(xp_gml)[0]
                 geom_type = gml_geom.tag.lstrip(GML_NS)

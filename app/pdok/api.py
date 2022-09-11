@@ -14,8 +14,10 @@ class API:
                 r = s.get(BASE_URL + DATASET_ENDPOINT)
                 data = r.json()["timeliness"]
                 featuretypes = [feature["featuretype"] for feature in data]
-                featuretypes.remove('plaatsbepalingspunt')
-                
+
+                if "plaatsbepalingspunt" not in discard_features:
+                    featuretypes.remove("plaatsbepalingspunt")
+
                 if discard_features:
                     for feature in discard_features:
                         featuretypes.remove(feature)
@@ -35,6 +37,7 @@ class API:
                 else:
                     return data["_links"]["download"]["href"]
                     break
+    
     def extract_zip(self,zipfile_dir):
         zipfile = zipfile_dir+'.zip'
         os.makedirs(zipfile_dir,exist_ok=True)
@@ -62,15 +65,13 @@ class API:
 
                         if unzip:
                             self.extract_zip(output)
-                            
-                        print(f"{extract_format.capitalize()} successfully downloaded to {output}")
-                        
 
                 except Exception as e:
                     print(f"Error: {e}")
-        
-        return os.path.abspath(output)
-            
+                else:
+                    print(f"{extract_format.capitalize()} successfully downloaded to {output}")
+                    
+     
             
            
 

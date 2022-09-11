@@ -19,10 +19,10 @@ def gml2dxf(input_gml):
     output_dxf_point = input_gml.replace(".gml","_point.dxf")
     output_dxf_label = input_gml.replace(".gml","_label.dxf")
 
-    gml2pnd_cmd = f'ogr2ogr -f DXF {output_dxf_pnd} {input_gml} -dialect sqlite -sql "SELECT ST_Union(ST_LinesFromRings(geometry)),\'PEN(c:#FF0000,w:5px)\' OGR_STYLE,OBJECT as Layer FROM Topo WHERE OBJECT=\'PND\' "'
+    gml2pnd_cmd = f'ogr2ogr -f DXF {output_dxf_pnd} {input_gml} -dialect sqlite -sql "SELECT ST_Union(ST_LinesFromRings(geometry)),\'PEN(c:#FF0000,w:5px)\' OGR_STYLE,\'Topo\' as Layer FROM Topo WHERE OBJECT=\'PND\' "'
     gml2line_cmd = f'ogr2ogr -f DXF {output_dxf_line} {input_gml} -dialect sqlite -sql "SELECT ST_Union(ST_LinesFromRings(geometry)),OGR_STYLE,\'Topo\' as Layer FROM Topo WHERE OBJECT!=\'PND\'"'
-    gml2point_cmd = f'ogr2ogr -f DXF {output_dxf_point} {input_gml} -sql "SELECT geometry,OBJECT as Layer FROM Topo_point"'
-    gml2label_cmd = f'ogr2ogr -f DXF {output_dxf_label} {input_gml} -sql "SELECT geometry,\'Label\' as Layer FROM Label"'
+    gml2point_cmd = f'ogr2ogr -f DXF {output_dxf_point} {input_gml} -sql "SELECT geometry,\'Topo\' as Layer FROM Topo_point"'
+    gml2label_cmd = f'ogr2ogr -f DXF {output_dxf_label} {input_gml} -sql "SELECT geometry,\'Topo\' as Layer FROM Label"'
     
     for cmd in [gml2pnd_cmd,gml2line_cmd,gml2point_cmd,gml2label_cmd]:
         os.system(cmd)

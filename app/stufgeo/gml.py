@@ -1,23 +1,23 @@
 from . import *
 
-GML_NS = "http://www.opengis.net/gml"
-etree.register_namespace("gml",GML_NS)
+GML_NS_URL = GML_NS.strip("{}")
 
-GML_ID_TAG = etree.QName(GML_NS,"id")
+etree.register_namespace("gml",GML_NS_URL)
+GML_ID_TAG = etree.QName(GML_NS_URL,"id")
 GML_SRS ="urn:ogc:def:crs:EPSG::28992"
 
 class GML:
 
     @classmethod
     def featureCollection(self):
-        root_name = etree.QName(GML_NS,"FeatureCollection")
+        root_name = etree.QName(GML_NS_URL,"FeatureCollection")
         root = etree.Element(root_name)
         root.text = ""
         return root
 
     @classmethod
     def featureGeometry(self,name = "geometry" ):
-        geom_name = etree.QName(GML_NS,name)
+        geom_name = etree.QName(GML_NS_URL,name)
         geom_prop = etree.Element(geom_name)
         geom_prop.text = ""
         return geom_prop
@@ -30,14 +30,14 @@ class GML:
 
     @classmethod
     def featureAttribute(self,name,value=''):
-        att_name = etree.QName(GML_NS,name)
+        att_name = etree.QName(GML_NS_URL,name)
         att_element = etree.Element(att_name)
         att_element.text = str(value)
         return att_element
 
     @classmethod
     def featureObject(self,name,gml_geom,gml_id=''):
-        feature_name = etree.QName(GML_NS,name)
+        feature_name = etree.QName(GML_NS_URL,name)
         feature_object = etree.Element(feature_name,{GML_ID_TAG:str(gml_id)})
 
         feature_geom = self.featureGeometry()

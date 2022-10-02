@@ -1,6 +1,5 @@
 from app import *
-import json
-import requests
+import json,requests
 from zipfile import ZipFile
 
 BASE_URL = APP_CONFIG["api"]["base_url"]

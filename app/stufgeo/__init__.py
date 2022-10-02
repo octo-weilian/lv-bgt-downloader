@@ -1,9 +1,4 @@
 from app import *
-from lxml import etree
-import numpy as np
-import pygeos
-from app.models.gml import GML
-import copy
 
 #stufgeo elements
 STUFGEO_NS = "{http://www.egem.nl/StUF/StUF0301}"
@@ -25,16 +20,18 @@ GML_NS = "{http://www.opengis.net/gml}"
 GML_POS = GML_NS+"pos"
 GML_POSLIST = GML_NS+"posList"
 GML_POINT = GML_NS +"Point"
+GML_ARC = GML_NS + "Arc"
+GML_EXTERIOR = GML_NS + "exterior"
+GML_INTERIOR = GML_NS + "interior"
 
 #xpath expressions
-xp_geometrie2d = ".//*[contains(name(),'geometrie2d')]"
-xp_geometrie = ".//*[contains(name(),'geometrie')]"
-xp_pos = ".//*[contains(name(),'pos')]"
-xp_poslist = ".//*[contains(name(),'posList')]"
-xp_lokaalid = ".//*[contains(name(),'lokaalID')]"
-xp_gml = ".//*[contains(name(),'gml')]"
-xp_tekst = ".//*[local-name()='tekst']"
-xp_point = ".//*[local-name()='Point']"
-xp_hoek = ".//*[local-name()='hoek']"
-
-
+XP_GEOMETRIE2D = ".//*[contains(name(),'geometrie2d')]"
+XP_GEOMETRIE = ".//*[contains(name(),'geometrie')]"
+XP_POS = ".//*[contains(name(),'pos')]"
+XP_POSLIST = ".//*[contains(name(),'posList')]"
+XP_LOKAALID = ".//*[contains(name(),'lokaalID')]"
+XP_GML = ".//*[contains(name(),'gml')]"
+XP_TEKST = ".//*[local-name()='tekst']"
+XP_POINT = ".//*[local-name()='Point']"
+XP_HOEK = ".//*[local-name()='hoek']"
+XP_ARC = ".//*[contains(name(),'Arc')]"

@@ -1,12 +1,11 @@
-import os
-import re
+import os,re,sys,time,copy,configparser
 from datetime import datetime
-import configparser
-import sys
-import time
-import json
-import pygeos
 from glob import glob
+import lxml
+from lxml import etree
+import pygeos
+import numpy as np
+import ezdxf
 
 #load app configfile (create template if not exists)
 APP_INI = "appConfig.ini"

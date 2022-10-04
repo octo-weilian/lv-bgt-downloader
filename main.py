@@ -1,7 +1,7 @@
 from app import APP_CONFIG
 from app.bgt import BGT
 
-MAKE_TOPO = APP_CONFIG["transformer"]["make_topo"]
+MAKE_CAD = APP_CONFIG["transformer"]["make_cad"]
 MAKE_GML = APP_CONFIG["transformer"]["make_gml"]
 
 if __name__=="__main__":
@@ -14,7 +14,7 @@ if __name__=="__main__":
     if bool(int(MAKE_GML)):
         filtered_gml = bgt_processor.transform_stufgeo(filtered_xml,'gml')
 
-    if bool(int(MAKE_TOPO)): 
+    if bool(int(MAKE_CAD)): 
         filtered_topo = bgt_processor.transform_stufgeo(filtered_xml,'dxf')
     
    

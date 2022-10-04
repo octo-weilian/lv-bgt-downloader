@@ -14,7 +14,6 @@ DISCARD_FEATURES = list(filter(None,APP_CONFIG["api"]["discard_features"].split(
 
 EXTRACT_PBP_PATH = EXTRACT_PATH+'_pbp'
 
-
 class BGT:
     def __init__(self):
         self.shapes_geom = self.read_shape(INPUT_SHAPES)
@@ -74,3 +73,4 @@ class BGT:
         
         parser.export_document(doc,output_doc)
 
+        

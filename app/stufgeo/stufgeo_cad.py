@@ -82,26 +82,37 @@ class StufgeoCAD:
         for line_shape in list(lwpolyline.explode(self.msp)):
             yield line_shape
     
+    def overkill(self):
+
+        try:
+            entities = self.msp.query("LINE ARC")
+            unique_segments = {}
+            for entity in entities:
+                if isinstance(entity,ezdxf.entities.arc.Arc):
+                    coords = [entity.start_point,entity.dxf.center,entity.end_point]
+                    linestring = normalize(pygeos.set_precision(pygeos.linestrings(coords),0.001))
+                else:
+                    coords = [entity.dxf.start,entity.dxf.end]
+                    linestring = normalize(pygeos.set_precision(pygeos.linestrings(coords),0.001))
+
+                unique_segments[linestring] = entity
+            
+            for entity in entities:
+                if entity not in unique_segments.values():
+                    self.msp.delete_entity(entity)
+
+            self.join_lines()
+        except:
+            print("Unable to execute overkill. Drawing may contain redundant elements.")
+        finally:
+            self.msp.purge()
+                
     def get_line_entities(self,entity):
         if isinstance(entity,ezdxf.entities.line.Line):
             return entity, entity.dxf.layer
+            
+    def join_lines(self):
 
-    def overkill(self):
-        line_entities = self.msp.groupby(key=self.get_line_entities)
-
-        line_entities_unique = {}
-        for line_entity,layer in line_entities:
-            coords = [list(line_entity.dxf.start)[:2],list(line_entity.dxf.end)[:2]]
-            linestring = normalize(pygeos.linestrings(coords))
-            line_entities_unique[linestring] = line_entity
-        
-        for line_entity,layer in line_entities:
-            if line_entity not in line_entities_unique.values():
-                self.msp.delete_entity(line_entity)
-
-        self.msp.purge()
-
-    def join(self):
         line_entities = self.msp.groupby(key=self.get_line_entities)
         line_group = {}
         for line_entity,layer in line_entities:
@@ -111,10 +122,19 @@ class StufgeoCAD:
             multilines = []
             for line_entity in grouped_entities:
                 coords = [list(line_entity.dxf.start)[:2],list(line_entity.dxf.end)[:2]]
-                linestring = pygeos.linestrings(coords)
+                linestring = normalize(pygeos.linestrings(coords))
                 multilines.append(linestring)
-            multilines = pygeos.multilinestrings(multilines)
-      
+                self.msp.delete_entity(line_entity)
+            multilines = pygeos.line_merge(pygeos.multilinestrings(multilines))
+
+            for linestring in pygeos.get_parts(multilines):
+                coords = pygeos.get_coordinates(linestring)
+                self.msp.add_lwpolyline(coords,dxfattribs={"layer":layer},close=False)
+ 
+            
+        
+
+            
         
                         
             

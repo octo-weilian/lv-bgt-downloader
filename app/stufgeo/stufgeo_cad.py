@@ -1,10 +1,8 @@
 from . import *
 import ezdxf
 from ezdxf.math import ConstructionArc
-from app.stufgeo import parser
 from app.stufgeo.parser import cleanup,get_labels
 from pygeos.constructive import normalize
-from osgeo import ogr
 
 class StufgeoCAD:
     def __init__(self,input_xml):

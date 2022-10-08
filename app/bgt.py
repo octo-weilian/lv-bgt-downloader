@@ -1,5 +1,3 @@
-from socket import fromshare
-import ezdxf
 from app import *
 from app.pdok.api import API
 from app.stufgeo.stufgeo_xml import StufgeoXML

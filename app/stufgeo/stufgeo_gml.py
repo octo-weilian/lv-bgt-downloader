@@ -1,6 +1,6 @@
 from . import *
 from app.stufgeo.gml import GML
-from app.stufgeo.parser import rotation2degree,get_lokaal_id,cleanup,get_labels
+from app.stufgeo.parser import get_lokaal_id,cleanup,get_labels
 
 class StufgeoGML:
     def __init__(self,input_xml):

@@ -1,5 +1,5 @@
 from . import *
-from app.stufgeo import parser
+from app.stufgeo.parser import cleanup,get_labels
 
 class StufgeoXML:
     def __init__(self,input_xml,input_pbp_xml):
@@ -22,46 +22,53 @@ class StufgeoXML:
 
         return base_root
     
-    def extract_objects(self,input_shape):
+    def geom2shape(self,element):
+        if (geom:=element.xpath(XP_GEOMETRIE2D)):
+            coords = np.hstack([coord.text.split(" ") for coord in geom[0].xpath(XP_POS)]).reshape(-1,2).astype(float)
+            shape = pygeos.multipoints(coords)
+            if len(coords)>1:
+                shape = pygeos.linestrings(coords)
+            return shape
 
+    def concat_xy(self,element,xquery):
+        if (geom:=element.xpath(xquery)):
+            coords = np.hstack([coord.text.split(" ") for coord in geom[0].xpath(XP_POS)]).reshape(-1,2).astype(float)
+            scaled_coords = (coords*1000).astype(int).astype(str)
+            return np.apply_along_axis(''.join, 1, scaled_coords)
+            
+    def extract_objects(self,input_shape):
         obj_count = 0
 
         for _,el in etree.iterparse(self.input_xml,huge_tree=True,tag=IMGEO_OBJ):
             parent = el.getparent()
-            if pygeos.intersects(input_shape,parser.geom2shape(el,make_bound=True)):
+            if pygeos.intersects(input_shape,self.geom2shape(el)):
                 self.root.append(copy.deepcopy(parent))
                 obj_count +=1
 
             if (orl_el:=el.find(IMGEO_ORL)) is not None:
-                orl_points = parser.get_labels(orl_el)[2]
+                orl_points = get_labels(orl_el)[2]
                 if pygeos.intersects(input_shape,pygeos.multipoints(orl_points)):
                     self.root.append(copy.deepcopy(parent))
-                    obj_count +=1
-
+                    
             print(f"Objects found: {obj_count}",end='\r')
-            parser.cleanup(el)
+            cleanup(el)
 
         print(f"Total objects found: {obj_count}")
         return self.root
     
     def extract_pbp(self):
         pbp_count = 0
-        all_points = []
+        pseudo_points = []
         for _,el in etree.iterwalk(self.root,tag=IMGEO_OBJ):
-            if (sum_points := parser.sum_geom(el,XP_GEOMETRIE2D)):
-                for p in sum_points:
-                    all_points.append(p)
-        all_points = np.array(all_points)
-
+            pseudo_points.append(self.concat_xy(el,XP_GEOMETRIE2D))
+        pseudo_points = np.hstack(pseudo_points)
+        
         for _,el in etree.iterparse(self.input_pbp_xml,huge_tree=True,tag=IMGEO_OBJ):
-            sum_point = parser.sum_geom(el,XP_GEOMETRIE)[0]
-            if sum_point in all_points :
-                parent = el.getparent()
-                self.root.append(copy.deepcopy(parent))
-
+            if self.concat_xy(el,XP_GEOMETRIE)[0] in pseudo_points:
+                self.root.append(copy.deepcopy(el.getparent()))
                 pbp_count +=1
                 print(f"PBP found: {pbp_count}",end='\r')
-            parser.cleanup(el)
+            cleanup(el)
 
         print(f"Total PBP found: {pbp_count}")
         return self.root

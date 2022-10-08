@@ -6,38 +6,9 @@ def cleanup(element):
         while ancestor.getprevious() is not None:
             del ancestor.getparent()[0]
 
-def geom2shape(element,make_bound=False):
-    if (geom:=element.xpath(XP_GEOMETRIE2D)):
-        stack_points = []
-        for coord in geom[0].xpath(XP_POS):
-            split_points = np.array(coord.text.split(" "),dtype=float)
-            stack_points.append(split_points)
-        stack_points = np.concatenate(stack_points,axis=None).reshape(-1,2)
-        shape = pygeos.multipoints(stack_points)
-        if len(stack_points)>1 and make_bound:
-            shape = pygeos.linestrings(stack_points)
-        return shape
-
-def sum_geom(element,xquery):
-    if (geom:=element.xpath(xquery)):
-        stack_points = []
-        for coord in geom[0].xpath(XP_POS):
-            split_points = np.array(coord.text.split(" "),dtype=float)
-            stack_points.append(split_points)
-        stack_points = np.concatenate(stack_points,axis=None).reshape(-1,2)
-        stack_points = (stack_points*1000).astype(int).tolist()
-        stack_points = [str(p[0])+str(p[1]) for p in stack_points]
-        return stack_points
-        
 def get_lokaal_id(element):
     if (lokaal_id := element.xpath(XP_LOKAALID)):
         return lokaal_id[0].text
-
-def rotation2degree(rotation):
-    degree = abs(rotation)
-    if rotation>0:
-        degree = 360-rotation
-    return degree
 
 def get_labels(element):
     text_elements = element.xpath(XP_TEKST)

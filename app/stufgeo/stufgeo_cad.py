@@ -2,8 +2,9 @@ from . import *
 import ezdxf
 from ezdxf.math import ConstructionArc
 from app.stufgeo import parser
-from app.stufgeo.parser import rotation2degree,cleanup,get_labels
+from app.stufgeo.parser import cleanup,get_labels
 from pygeos.constructive import normalize
+from osgeo import ogr
 
 class StufgeoCAD:
     def __init__(self,input_xml):
@@ -11,19 +12,6 @@ class StufgeoCAD:
         self.imgeo_objects = etree.iterparse(input_xml,huge_tree=True,tag=IMGEO_OBJ)
         self.doc = ezdxf.new(units=1)
         self.msp = self.doc.modelspace()
-
-    def gen_labels(self,element):
-        texts,rotations,points,_ = get_labels(element)
-        for i in range(len(points)):
-            yield texts[i],rotation2degree(float(rotations[i])),points[i]
-
-    def draw_arc(self,arc_coords):
-        p1,arc_pos,p2 = arc_coords
-        arc_orient = (arc_pos[0]-p1[0])*(p2[1]-p1[1]) - (arc_pos[1]-p1[1])*(p2[0]-p1[0])
-        ccw = True 
-        if arc_orient<0:
-            ccw = False
-        return ConstructionArc.from_3p(p1,p2,arc_pos,ccw=ccw)
 
     def build_cad(self):
         for _,el in self.imgeo_objects:
@@ -33,7 +21,7 @@ class StufgeoCAD:
             object_attributes = {"layer":entity_type}
             
             if (imgeo_geom:=el.xpath(XP_GEOMETRIE2D)):
-                shapes = self.contruct_shapes(imgeo_geom[0],True)
+                shapes = self.contruct_shapes(imgeo_geom[0])
                 for shape in shapes:
                     if "arc" in str(type(shape)):
                         shape.add_to_layout(self.msp,dxfattribs=object_attributes)
@@ -56,7 +44,26 @@ class StufgeoCAD:
 
         return self.doc
 
-    def contruct_shapes(self,imgeo_geom,explode_segments=False):
+    def gen_labels(self,element):
+        texts,rotations,points,_ = get_labels(element)
+        for i in range(len(points)):
+            yield texts[i],self.rotation2degree(float(rotations[i])),points[i]
+
+    def draw_arc(self,arc_coords):
+        p1,arc_pos,p2 = arc_coords
+        arc_orient = (arc_pos[0]-p1[0])*(p2[1]-p1[1]) - (arc_pos[1]-p1[1])*(p2[0]-p1[0])
+        ccw = True 
+        if arc_orient<0:
+            ccw = False
+        return ConstructionArc.from_3p(p1,p2,arc_pos,ccw=ccw)
+
+    def rotation2degree(self,rotation):
+        degree = abs(rotation)
+        if rotation>0:
+            degree = 360-rotation
+        return degree
+
+    def contruct_shapes(self,imgeo_geom,explode_segments=True):
         gml_geom = imgeo_geom.xpath(XP_GML)[0]
         geom_type = etree.QName(gml_geom).localname
         
@@ -83,7 +90,6 @@ class StufgeoCAD:
             yield line_shape
     
     def overkill(self):
-
         try:
             entities = self.msp.query("LINE ARC")
             unique_segments = {}
@@ -103,7 +109,8 @@ class StufgeoCAD:
 
             self.join_lines()
         except:
-            print("Unable to execute overkill. Drawing may contain redundant elements.")
+            print("Unable to execute overkill. Drawing may contains redundant elements.")
+            pass
         finally:
             self.msp.purge()
                 

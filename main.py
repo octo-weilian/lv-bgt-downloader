@@ -4,8 +4,6 @@ from app.bgt import BGT
 MAKE_CAD = bool(int(APP_CONFIG["transformer"]["make_cad"]))
 MAKE_GML = bool(int(APP_CONFIG["transformer"]["make_gml"]))
 
-import time
-
 if __name__=="__main__":
     print("Running BGT-downloader...")
     

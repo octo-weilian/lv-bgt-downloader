@@ -1,6 +1,6 @@
 from . import *
 from app.stufgeo.gml import GML
-from app.stufgeo.parser import get_lokaal_id,cleanup,get_labels
+from app.stufgeo.parser import get_lokaal_id,cleanup_element,get_labels
 
 class StufgeoGML:
     def __init__(self,input_xml):
@@ -28,7 +28,7 @@ class StufgeoGML:
             except:
                 pass
             
-            cleanup(el)
+            cleanup_element(el)
 
         return self.feature_collection
 
@@ -39,14 +39,19 @@ class StufgeoGML:
             feature_label.append(GML.featureAttribute("Text",texts[i]))
             feature_label.append(GML.featureAttribute("Rotation",float(rotations[i]) ))
             yield feature_label
-
+    
     def topo_feature(self,element,imgeo_geom):
         gml_geom = imgeo_geom.xpath(XP_GML)[0]
         geom_type = etree.QName(gml_geom).localname
-        feature_obj = GML.featureObject("Topo",gml_geom,get_lokaal_id(element))
-        feature_obj.append(GML.featureAttribute("Object",element.attrib[STUFGEO_ENT_TYPE]))
         if geom_type == "Point":
+            feature_obj = GML.featureObject("TopoPoint",gml_geom,get_lokaal_id(element))
             feature_obj.append(GML.featureAttribute("Type",element.find(IMGEO_PLUSTYPE).text))
+        elif "Line" in geom_type:
+            feature_obj = GML.featureObject("TopoLine",gml_geom,get_lokaal_id(element))
+        else:
+            feature_obj = GML.featureObject("Topo",gml_geom,get_lokaal_id(element))
+
+        feature_obj.append(GML.featureAttribute("Object",element.attrib[STUFGEO_ENT_TYPE]))
         return feature_obj
 
 

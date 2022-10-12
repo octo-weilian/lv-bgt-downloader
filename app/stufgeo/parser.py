@@ -1,6 +1,6 @@
 from . import *
 
-def cleanup(element):
+def cleanup_element(element):
     element.clear()
     for ancestor in element.xpath('ancestor-or-self::*'):
         while ancestor.getprevious() is not None:

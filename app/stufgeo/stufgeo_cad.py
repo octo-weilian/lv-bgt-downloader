@@ -1,8 +1,10 @@
 from . import *
 import ezdxf
 from ezdxf.math import ConstructionArc
-from app.stufgeo.parser import cleanup,get_labels
+from app.stufgeo.parser import cleanup_element,get_labels
 from pygeos.constructive import normalize
+
+CLEANUP_CAD = bool(int(APP_CONFIG["transformer"]["cleanup_cad"]))
 
 class StufgeoCAD:
     def __init__(self,input_xml):
@@ -36,9 +38,10 @@ class StufgeoCAD:
             except:
                 pass
 
-            cleanup(el)
+            cleanup_element(el)
 
-        self.overkill()
+        if CLEANUP_CAD:
+            self.cleanup_cad()
 
         return self.doc
 
@@ -87,7 +90,7 @@ class StufgeoCAD:
         for line_shape in list(lwpolyline.explode(self.msp)):
             yield line_shape
     
-    def overkill(self):
+    def cleanup_cad(self):
         try:
             entities = self.msp.query("LINE ARC")
             unique_segments = {}

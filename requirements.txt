@@ -1,7 +1,6 @@
 certifi==2022.6.15.1
 charset-normalizer==2.1.1
 ezdxf==0.18.1
-GDAL @ file:///E:/GitHub-repositories/lv-bgt-downloader/wheels/GDAL-3.4.3-cp39-cp39-win_amd64.whl
 idna==3.3
 lxml==4.9.1
 numpy==1.23.3

@@ -1,5 +1,5 @@
 from . import *
-from app.stufgeo.parser import cleanup,get_labels
+from app.stufgeo.parser import cleanup_element,get_labels
 
 class StufgeoXML:
     def __init__(self,input_xml,input_pbp_xml):
@@ -51,7 +51,7 @@ class StufgeoXML:
                     self.root.append(copy.deepcopy(parent))
                     
             print(f"Objects found: {obj_count}",end='\r')
-            cleanup(el)
+            cleanup_element(el)
 
         print(f"Total objects found: {obj_count}")
         return self.root
@@ -68,7 +68,7 @@ class StufgeoXML:
                 self.root.append(copy.deepcopy(el.getparent()))
                 pbp_count +=1
                 print(f"PBP found: {pbp_count}",end='\r')
-            cleanup(el)
+            cleanup_element(el)
 
         print(f"Total PBP found: {pbp_count}")
         return self.root

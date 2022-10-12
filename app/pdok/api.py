@@ -44,7 +44,6 @@ class API:
             src.extractall(zipfile_dir)
         os.remove(zipfile)
        
-
     def download(self,features,wkt,output,extract_format="stufgeo",unzip=True):
         headers = {'Content-Type':'application/json','Accept': 'application/json'}
         payload = {"featuretypes":features,"format":extract_format,"geofilter":wkt}
@@ -52,15 +51,14 @@ class API:
         if not os.path.isdir(output):
             with requests.Session() as s:
                 try:
-                    r = s.post(BASE_URL + FULL_CUSTOM_ENDPOINT,data=json.dumps(payload),headers=headers)
-                    data = r.json()
+                    data = s.post(BASE_URL + FULL_CUSTOM_ENDPOINT,data=json.dumps(payload),headers=headers).json()
                     status_endpoint = data["_links"]["status"]["href"]
-                    download_id = data["downloadRequestId"]
                     if (download_endpoint := self.await_download(status_endpoint)):
-                        download_url = BASE_URL+ download_endpoint
-                        download_content = s.get(download_url).content
-                        with open(output+".zip","wb") as dst:
-                            dst.write(download_content)
+                        with s.get(BASE_URL+ download_endpoint) as r_content:
+                            r_content.raise_for_status()
+                            with open(output+".zip","wb") as dst:
+                                for chunk in r_content.iter_content(chunk_size=1024):
+                                    dst.write(chunk)
 
                         if unzip:
                             self.extract_zip(output)

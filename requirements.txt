@@ -1,11 +1,5 @@
-certifi==2022.6.15.1
-charset-normalizer==2.1.1
-ezdxf==0.18.1
-idna==3.3
-lxml==4.9.1
-numpy==1.23.3
-pygeos==0.13
-pyparsing==3.0.9
-requests==2.28.1
-typing_extensions==4.3.0
-urllib3==1.26.12
+ezdxf
+lxml
+numpy
+pygeos
+requests

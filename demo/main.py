@@ -11,7 +11,7 @@ if APP_CONFIG.parser is not None:
     OUTPUT_DIR = APP_CONFIG.get("app","output_dir")
     INPUT_AOI = APP_CONFIG.get("app","input_aoi")
     FEATURES = list(filter(None,APP_CONFIG.get("app","features").split(";")))
-
+    
     #processing config
     ADD_PBP = bool(int(APP_CONFIG.get("processing","add_pbp")))
     MAKE_GML = bool(int(APP_CONFIG.get("processing","make_gml")))
@@ -40,18 +40,6 @@ if __name__=="__main__":
     if MAKE_CAD:
         lv_bgt.convert_stufgeo(stufgeo_xml,"DXF",CLEANUP_CAD)
     
-    
-    
-    
-
-
-
-    
-
-    
-
-
-   
 
 
 

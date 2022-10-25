@@ -28,11 +28,11 @@ class StufgeoCAD:
             try:
                 if el.find(IMGEO_ORL) is not None:
                     for text,rot_degree,point in self.gen_labels(el):
-                        self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point)
+                        self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point,align="CENTER")
                         
                 if el.find(IMGEO_HOUSENR) is not None:
                     for text,rot_degree,point in self.gen_labels(el):
-                        self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point)
+                        self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point,align="CENTER")
             except:
                 pass
 
@@ -89,6 +89,7 @@ class StufgeoCAD:
             yield line_shape
     
     def cleanup_cad(self):
+        LOGGER.info("Cleaning up drawing...")
         try:
             entities = self.msp.query("LINE ARC")
             unique_segments = {}

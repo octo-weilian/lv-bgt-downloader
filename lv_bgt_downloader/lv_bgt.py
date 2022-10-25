@@ -49,11 +49,13 @@ class LV_BGT:
         return stufgeo_xml
             
     def build_stufgeo(self,input_xml):
-        if not self.stufgeo_xml.exists():
+        if not self.stufgeo_xml.exists() and Path(input_xml).exists():
             doc = StufgeoXML(input_xml).filter_objects(self.input_aoi)
 
             xml_utils.export_document(doc,str(self.stufgeo_xml),False,False)
             LOGGER.info(f"Exported to {self.stufgeo_xml}")
+        elif not Path(input_xml).exists():
+            LOGGER.error(f"{input_xml} does not exists")
 
         return self.stufgeo_xml
 
@@ -61,19 +63,23 @@ class LV_BGT:
         if Path(input_xml).exists() and Path(input_pbp_xml).exists():
             doc = StufgeoXML.filter_pbp(input_xml,input_pbp_xml)
             xml_utils.export_document(doc,input_xml,False,False)
+        else:
+            LOGGER.error(f"{input_xml} and/or {input_pbp_xml} does not exists")
             
         return input_xml
     
     @staticmethod
-    def convert_stufgeo(stufgeo_xml,format,cleanup_cad=True):
-        if format == 'GML':
-            doc = StufgeoGML(stufgeo_xml).build_gml()
-        elif format =='DXF':
-            doc = StufgeoCAD(stufgeo_xml).build_cad(cleanup_cad)
+    def convert_stufgeo(input_xml,format,cleanup_cad=True):
+        output_file = Path(input_xml).with_suffix(f".{format.lower()}")
+        if not output_file.exists() and Path(input_xml).exists():
+            if format == 'GML':
+                doc = StufgeoGML(input_xml).build_gml()
+            elif format =='DXF':
+                doc = StufgeoCAD(input_xml).build_cad(cleanup_cad)
 
-        output_file = Path(stufgeo_xml).with_suffix(f".{format.lower()}")
-
-        xml_utils.export_document(doc,str(output_file))
-        LOGGER.info(f"Exported to {output_file}")
+            xml_utils.export_document(doc,str(output_file))
+            LOGGER.info(f"Exported to {output_file}")
+        elif not Path(input_xml).exists():
+            LOGGER.error(f"{input_xml} does not exists")
 
         

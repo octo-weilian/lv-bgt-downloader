@@ -88,6 +88,8 @@ class StufgeoXML:
                 
             LOGGER.info(f"Added {pbp_count} PBPs to {input_xml}")
             return root
+        else:
+            LOGGER.warning(f"{input_xml} already contains PBPs")
         
         
             

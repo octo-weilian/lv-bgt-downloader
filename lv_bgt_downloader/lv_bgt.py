@@ -12,7 +12,6 @@ class LV_BGT:
     def __init__(self,input_aoi,output_dir):
 
         self.input_aoi = self.read_geojson(input_aoi)
-        
         #io dirs
         self.output_dir = Path(output_dir,f"{TS}_{APP_NAME.lower()}_data")
         self.output_dir.mkdir(parents=True,exist_ok=True)
@@ -25,12 +24,16 @@ class LV_BGT:
         
     def read_geojson(self,geojson):
         #read geojson as pygeos multipolygons
-        with open(geojson,"rb") as src:
-            geoms = pygeos.get_parts(pygeos.from_geojson(src.read()))
-            try:
-                return pygeos.multipolygons(geoms)
-            except:
-                return pygeos.multipolygons(geoms[0])
+        if Path(geojson).is_file():
+            with open(geojson,"rb") as src:
+                geoms = pygeos.from_geojson(src.read())
+        elif isinstance(geojson,str):
+            geoms = pygeos.from_geojson(geojson)
+        
+        if "GEOMETRYCOLLECTION" in str(geoms):
+            return pygeos.multipolygons(pygeos.get_parts(geoms))
+        else:
+            return geoms
     
     def download_stufgeo(self,features):
         stufgeo_zip = Path(self.temp_dir,f"extract.zip")

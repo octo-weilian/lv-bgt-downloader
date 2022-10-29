@@ -29,6 +29,9 @@ class LV_BGT:
                 geoms = pygeos.from_geojson(src.read())
         elif isinstance(geojson,str):
             geoms = pygeos.from_geojson(geojson)
+        elif not Path(geojson).exists():
+            LOGGER.critical(f"{geojson} does not exists. Program exited.")
+            sys.exit()
         
         if "GEOMETRYCOLLECTION" in str(geoms):
             return pygeos.multipolygons(pygeos.get_parts(geoms))
@@ -58,8 +61,9 @@ class LV_BGT:
             xml_utils.export_document(doc,str(self.stufgeo_xml),False,False)
             LOGGER.info(f"Exported to {self.stufgeo_xml}")
         elif not Path(input_xml).exists():
-            LOGGER.error(f"{input_xml} does not exists")
-
+            LOGGER.critical(f"{input_xml} does not exists. Program exited.")
+            sys.exit()
+        
         return self.stufgeo_xml
 
     def add_stufgeo_pbp(self,input_xml,input_pbp_xml):

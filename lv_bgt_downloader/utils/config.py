@@ -16,8 +16,11 @@ class appConfig:
         else:
             return None
             
-    def save_config(self,section,option,value):
-        self.parser.set(section, option, value)
+    def save_config(self,section,values):
+        options = [option for option,_ in self.parser.items(section)]
+        for i in range(len(options)):
+            self.parser.set(section, options[i], str(values[i]))
+
         with open(self.config_file, 'w+') as dst:
             self.parser.write(dst)
        

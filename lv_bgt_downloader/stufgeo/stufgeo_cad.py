@@ -29,7 +29,6 @@ class StufgeoCAD:
                 if el.find(IMGEO_ORL) is not None:
                     for text,rot_degree,point in self.gen_labels(el):
                         self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point,align="CENTER")
-                        
                 if el.find(IMGEO_HOUSENR) is not None:
                     for text,rot_degree,point in self.gen_labels(el):
                         self.msp.add_text(text,dxfattribs=label_attributes,rotation=rot_degree).set_pos(point,align="CENTER")

@@ -24,13 +24,13 @@ class LV_BGT:
         
     def read_geojson(self,geojson):
         #read geojson as pygeos multipolygons
-        if Path(geojson).is_file():
+        if Path(geojson).is_file() and Path(geojson).exists():
             with open(geojson,"rb") as src:
                 geoms = pygeos.from_geojson(src.read())
         elif isinstance(geojson,str):
             geoms = pygeos.from_geojson(geojson)
-        elif not Path(geojson).exists():
-            LOGGER.critical(f"{geojson} does not exists. Program exited.")
+        else:
+            LOGGER.critical(f"Unable to read {geojson}. Program exited.")
             sys.exit()
         
         if "GEOMETRYCOLLECTION" in str(geoms):

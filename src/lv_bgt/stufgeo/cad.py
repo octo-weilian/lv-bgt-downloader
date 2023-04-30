@@ -2,7 +2,7 @@ from . import *
 from . import xml_utils
 
 from ezdxf.math import ConstructionArc
-from pygeos.constructive import normalize
+from shapely.constructive import normalize
 
 class StufgeoCAD:
     def __init__(self,input_xml):
@@ -88,7 +88,7 @@ class StufgeoCAD:
             yield line_shape
     
     def cleanup_cad(self):
-        LOGGER.info("Cleaning up drawing...")
+        print("Cleaning up drawing...")
         try:
             entities = self.msp.query("LINE ARC")
             unique_segments = {}
@@ -108,7 +108,7 @@ class StufgeoCAD:
 
             self.join_lines()
         except:
-            LOGGER.warning("Unable cleaning up data. Drawing may contains redundant elements.")
+            print("Unable cleaning up data. Drawing may contains redundant elements.")
             pass
         finally:
             self.msp.purge()

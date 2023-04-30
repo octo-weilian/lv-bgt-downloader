@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lv-bgt"
+version = "0.1.0"
+description = "A Python package to download and parse StuF-Geo XML from Dutch BGT Download API"
+requires-python = ">=3.7"
+authors = [{name = "octo-willy"}]
+readme = "README.md"
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = [
+    "lxml>=4.9.1",
+    "numpy>=1.23.4",
+    "pygeos>=0.13",
+    "requests>=2.28.1"
+    ]
+
+[project.urls]
+Source = "https://github.com/octo-willy/lv-bgt-downloader"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

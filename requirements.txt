@@ -1,5 +1,5 @@
-ezdxf==0.18.1
-lxml==4.9.1
-numpy==1.23.4
-pygeos==0.13
-requests==2.28.1
+ezdxf>=0.18.1
+lxml>=4.9.1
+numpy>=1.23.4
+pygeos>=0.13
+requests>=2.28.1

@@ -1,11 +1,9 @@
-from .. import *
 import copy
 import lxml
 from lxml import etree
 import ezdxf
 import numpy as np
 import pygeos
-
 
 #stufgeo elements
 STUFGEO_NS = "{http://www.egem.nl/StUF/StUF0301}"
